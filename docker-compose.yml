@@ -1,0 +1,49 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chatzap-backend
+    ports:
+      - "8010:8080"
+    env_file:
+      - ./.env
+    volumes:
+      - ./dist:/app/dist
+    networks:
+      - whaticket-network
+    restart: always
+    depends_on:
+      - db
+      - redis
+    command: sh -c "npm run db:migrate && node dist/server.js"
+
+  db:
+    image: postgres:15
+    restart: always
+    container_name: chatzap-db
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    ports:
+      - "5410:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - whaticket-network
+
+  redis:
+    image: redis:alpine
+    container_name: chatzap-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - whaticket-network
+
+networks:
+  whaticket-network:
+
+
+volumes:
+  pg_data:
