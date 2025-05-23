@@ -37,7 +37,7 @@ services:
     image: redis:alpine
     container_name: chatzap-redis
     ports:
-      - "6379:6379"
+      - "6310:6379"
     networks:
       - whaticket-network
 
